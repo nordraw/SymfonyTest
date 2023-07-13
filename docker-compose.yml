@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  web:
+    hostname: test_web
+    container_name: test_web
+    build: ./docker/web
+    image: test/web
+    volumes:
+      - './:/var/www/test'
+    working_dir: /var/www/test
+
+  nginx:
+    hostname: test_nginx
+    container_name: test_nginx
+    image: nginx:latest
+    ports:
+      - '81:80'
+      - '444:443'
+    volumes:
+      - './:/var/www/test'
+      - './docker/nginx/conf.d:/etc/nginx/conf.d'
+    working_dir: /var/www/test
+
+  mysql:
+    hostname: test_mysql
+    container_name: test_mysql
+    image: mysql/mysql-server:8.0.32
+    command: mysqld --user=root --verbose
+    ports:
+      - '3307:3306'
+    environment:
+      - MYSQL_DATABASE=test
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=password
+      - MYSQL_ROOT_PASSWORD=supersecret
+      - MYSQL_ROOT_HOST=%
